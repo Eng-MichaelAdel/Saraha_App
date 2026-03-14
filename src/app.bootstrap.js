@@ -1,0 +1,30 @@
+import express from "express";
+import { PORT } from "../config/config.service.js";
+import dbConnection from "./db/db.connection.js";
+import errorHandler from "./middlewares/global-error-handler.middleware.js";
+
+async function bootstrap() {
+  // create app instance from express
+  const app = express();
+  
+  // Database Connection
+  dbConnection();
+
+  // parse body to JSON
+  app.use(express.json());
+
+  // Invalid app router handler
+  app.use("{/*dummy}", (req, res, next) => {
+    return res.status(400).json({ message: "invalid application routing" });
+  });
+
+  //   global error handler
+  app.use(errorHandler);
+  // server config
+  const port = PORT;
+  app.listen(port, () => {
+    console.log(`server is connected successfully 🚀 on port :: ${port}`);
+  });
+}
+
+export default bootstrap;
