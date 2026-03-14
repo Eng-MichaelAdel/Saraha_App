@@ -1,4 +1,4 @@
-import { errorResponse } from "../../common/utils/index.js";
+import { decrypt, encrypt, errorResponse } from "../../common/utils/index.js";
 import { userModel } from "../../db/models/index.js";
 
 export const signup = async (userInputs) => {
@@ -7,8 +7,11 @@ export const signup = async (userInputs) => {
   if (checkUserExist) {
     errorResponse({ status: 409, message: "email is already exist" });
   }
-
-  const user = await userModel.create({ firstName, lastName, email, password, phone, gender });
+  const userObject = { firstName, lastName, email, password, phone, gender };
+  if (phone) {
+    userObject.phone = encrypt(phone);
+  }
+  const user = await userModel.create(userObject);
   return user;
 };
 
@@ -18,6 +21,6 @@ export const login = async (userInputs) => {
   if (!checkUserExist) {
     errorResponse({ status: 404, message: "Invalid Login Credentials" });
   }
-
+  checkUserExist.phone = decrypt(checkUserExist.phone);
   return checkUserExist;
 };

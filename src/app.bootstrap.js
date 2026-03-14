@@ -3,6 +3,7 @@ import { PORT } from "../config/config.service.js";
 import dbConnection from "./db/db.connection.js";
 import errorHandler from "./middlewares/global-error-handler.middleware.js";
 import { authRouter } from "./modules/Auth/index.js";
+import crypto from "crypto"
 
 async function bootstrap() {
   // create app instance from express
@@ -11,6 +12,9 @@ async function bootstrap() {
   // Database Connection
   dbConnection();
 
+  const ENCRYPTION_KEY = crypto.randomBytes(32)
+  console.log(ENCRYPTION_KEY.toString("hex"));
+  
   // parse body to JSON
   app.use(express.json());
 
