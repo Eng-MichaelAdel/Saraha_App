@@ -11,9 +11,6 @@ async function bootstrap() {
 
   // Database Connection
   dbConnection();
-
-  const ENCRYPTION_KEY = crypto.randomBytes(32)
-  console.log(ENCRYPTION_KEY.toString("hex"));
   
   // parse body to JSON
   app.use(express.json());

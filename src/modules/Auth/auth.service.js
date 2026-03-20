@@ -3,8 +3,8 @@ import { userModel } from "../../db/models/index.js";
 
 export const signup = async (userInputs) => {
   const { firstName, lastName, email, password, phone, gender } = userInputs;
-  const checkUserExist = await userModel.findOne({ email });
-  if (checkUserExist) {
+  const emailExist = await userModel.findOne({ email });
+  if (emailExist) {
     errorResponse({ status: 409, message: "email is already exist" });
   }
   const userObject = { firstName, lastName, email, password, phone, gender };
