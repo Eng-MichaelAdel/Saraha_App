@@ -13,4 +13,7 @@ export const DB_URI = process.env.DB_URI ?? "mongodb+srv://Maico89:si7o123456789
 
 //  Encryption and Decryption
 export const ENCRYPTION_KEY = process.env.ENCRYPTION_KEY;
-export const IV_LENGTH = process.env.IV_LENGTH ?? "16";
+export const IV_LENGTH = parseInt(process.env.IV_LENGTH) ?? 16;
+
+// Hash
+export const SALT_ROUND = parseInt(process.env.SALT_ROUND) ?? 12;

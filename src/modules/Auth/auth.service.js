@@ -1,4 +1,4 @@
-import { decrypt, encrypt, errorResponse } from "../../common/utils/index.js";
+import { compareHash, decrypt, encrypt, errorResponse, generateHash } from "../../common/utils/index.js";
 import { userModel } from "../../db/models/index.js";
 
 export const signup = async (userInputs) => {
@@ -7,7 +7,8 @@ export const signup = async (userInputs) => {
   if (emailExist) {
     errorResponse({ status: 409, message: "email is already exist" });
   }
-  const userObject = { firstName, lastName, email, password, phone, gender };
+  const hashedPasswoed = await generateHash(password);
+  const userObject = { firstName, lastName, email, password: hashedPasswoed, phone, gender };
   if (phone) {
     userObject.phone = encrypt(phone);
   }
@@ -17,10 +18,11 @@ export const signup = async (userInputs) => {
 
 export const login = async (userInputs) => {
   const { email, password } = userInputs;
-  const checkUserExist = await userModel.findOne({ email, password });
-  if (!checkUserExist) {
+  const user = await userModel.findOne({ email });
+  if (!user || !compareHash(password, user.password)) {
     errorResponse({ status: 404, message: "Invalid Login Credentials" });
   }
-  checkUserExist.phone = decrypt(checkUserExist.phone);
-  return checkUserExist;
+  user.phone = decrypt(user.phone);
+
+  return user;
 };
