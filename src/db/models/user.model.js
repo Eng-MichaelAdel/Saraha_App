@@ -50,6 +50,6 @@ userSchema
     this.set({ firstName, lastName });
   });
 
-const user = mongoose.models.User || mongoose.model("user", userSchema);
+const user = mongoose.models.user || mongoose.model("user", userSchema);
 
 export default user;
