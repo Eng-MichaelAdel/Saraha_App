@@ -10,8 +10,8 @@ router.post("/signup", async (req, res, next) => {
 });
 
 router.post("/login", async (req, res, next) => {
-  const user = await login(req.body);
-  successResponse({ res, message: "Login Successfully",data:{account:user} });
+  const Token = await login(req.body);
+  successResponse({ res, message: "Login Successfully",data:{Token} });
 });
 
 export default router;

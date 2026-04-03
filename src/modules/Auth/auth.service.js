@@ -1,33 +1,48 @@
-import { compareHash, decrypt, encrypt, errorResponse, generateHash } from "../../common/utils/index.js";
+import { compareHash, decrypt, encrypt, errorResponse, generateHash, createAccesToken, detectSignitureByRole } from "../../common/utils/index.js";
 import { UserRepository } from "../../db/repositories/index.js";
 
 //* signup
 export const signup = async (userInputs) => {
-  const { firstName, lastName, email, password, phone, gender } = userInputs;
-  const emailExist = await UserRepository.findOne({ filter: { email }, select: { email: 1,_id:0}, options: { lean: true } });
+  //  check email exist
+  const emailExist = await UserRepository.findOne({ filter: { email: userInputs.email }, select: { email: 1, _id: 0 }, options: { lean: true } });
+  console.log(userInputs.email);
 
   if (emailExist) {
     errorResponse({ status: 409, message: "email is already exist" });
   }
-  const hashedPasswoed = await generateHash(password);
-  const userObject = { firstName, lastName, email, password: hashedPasswoed, phone, gender };
-  if (phone) {
-    userObject.phone = encrypt(phone);
+
+  //  hash password
+  userInputs.password = await generateHash(userInputs.password);
+
+  //  encrypt phone
+  if (userInputs.phone) {
+    userInputs.phone = encrypt(userInputs.phone);
   }
-  const user = await UserRepository.createOne({ data: userObject });
+
+  //  create user
+  const user = await UserRepository.createOne({ data: userInputs });
   return user;
 };
-
 
 //* login
 export const login = async (userInputs) => {
   const { email, password } = userInputs;
-  const user = await UserRepository.findOne({ filter: { email }});
 
+  //  check login credintial's validation
+  const user = await UserRepository.findOne({ filter: { email } });
   if (!user || !(await compareHash(password, user.password))) {
     errorResponse({ status: 404, message: "Invalid Login Credentials" });
   }
-  user.phone = decrypt(user.phone);
 
-  return user;
+  //  detect Signiture due to Role
+  const { accessSignature, accessExp } = detectSignitureByRole(user.role);
+
+  //  get acces token
+  const { accessToken } = createAccesToken({
+    payload: { id: user._id, email: user.email, role: user.role },
+    secret: accessSignature,
+    options: { expiresIn: accessExp, issuer: "http://localhost:3000", audience: ["web", "mobile"], noTimestamp: true },
+  });
+
+  return accessToken;
 };

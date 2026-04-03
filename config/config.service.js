@@ -17,3 +17,9 @@ export const IV_LENGTH = parseInt(process.env.IV_LENGTH) ?? 16;
 
 // Hash
 export const SALT_ROUND = parseInt(process.env.SALT_ROUND) ?? 12;
+
+// jwt secrets
+export const JWT_SECRETS = {
+  user: { accessSignature: process.env.USER_JWT_ACCESS_SECRET, accessExp: process.env.USER_JWT_ACCESS_EXP },
+  admin: { accessSignature: process.env.ADMIN_JWT_ACCESS_SECRET, accessExp: process.env.ADMIN_JWT_ACCESS_EXP },
+};

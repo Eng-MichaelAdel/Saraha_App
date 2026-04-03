@@ -1,0 +1,1 @@
+export {default as userRouer} from "./user.controller.js"
