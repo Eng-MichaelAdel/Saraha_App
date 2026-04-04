@@ -8,16 +8,29 @@ export const generateToken = ({ payload, secret, options }) => {
   return jwt.sign(payload, secret, options);
 };
 
+
+
+
 export const verifyToken = ({ token, secret, options }) => {
   return jwt.verify(token, secret);
 };
+
+
 
 export const createAccesToken = ({ payload, secret, options }) => {
   const accessToken = generateToken({ payload, secret, options });
   return { accessToken };
 };
 
+
+
+
 export const decodeToken = ({ token }) => {
+  //  check if token is sent in headers
+  if(!token){
+    errorResponse({message:"Authorization token is required"})
+  }
+
   //  decode token to get role
   const decodeData = jwt.decode(token);
 
@@ -30,11 +43,30 @@ export const decodeToken = ({ token }) => {
   const { accessSignature } = detectSignitureByRole(decodeData.role);
 
   //  verify token
-  const userData = verifyToken({ token, secret: accessSignature });
-
-  //  return user
-  return userRepositories.findById({ id: userData.id });
+  return verifyToken({ token, secret: accessSignature });
 };
+
+
+
+
+
+export const getUserFromDecodedToken = ({ token }) => {
+  const decodedData = decodeToken({ token });
+  //  return user
+  return userRepositories.findById({ id: decodedData.id });
+};
+
+
+
+export const getPadyloadFromDecodedToken = ({ token }) => {
+  const Padyload = decodeToken({ token });
+  return Padyload;
+};
+
+
+
+
+
 
 export const detectSignitureByRole = (role) => {
   let signature = JWT_SECRETS.user;

@@ -17,7 +17,7 @@ async function bootstrap() {
 
   // application routing
   app.use("/auth", authRouter);
-  app.use("/user" , userRouer)
+  app.use("/profile" , userRouer)
 
   // Invalid app router handler
   app.use("{/*dummy}", (req, res, next) => {

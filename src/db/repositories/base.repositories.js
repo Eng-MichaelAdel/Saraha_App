@@ -84,8 +84,8 @@ export class BaseRepository {
     return this.model.findOneAndUpdate(filter, { ...updates, $inc: { __v: 1 } }, { ...options, runValidators: true, new: true });
   }
 
-  finByIdAndUpdate({ id, updates, options = {} } = {}) {
-    return this.model.finByIdAndUpdate(id, { ...updates, $inc: { __v: 1 } }, { ...options, runValidators: true, new: true });
+  findByIdAndUpdate({ id, updates, options = {} } = {}) {
+    return this.model.findByIdAndUpdate(id, { ...updates, $inc: { __v: 1 } }, { ...options, runValidators: true, new: true });
   }
 
   findOneAndReplace({ filter = {}, updates, options = {} } = {}) {
