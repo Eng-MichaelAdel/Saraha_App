@@ -2,9 +2,9 @@ import { decrypt, encrypt, errorResponse, getPadyloadFromDecodedToken, getUserFr
 import userRepositories from "../../db/repositories/user.repositories.js";
 
 // * get Profile
-export const getUserProfile = async (headrs) => {
+export const getUserProfile = async (headers) => {
   //  get access token from headers
-  const accessToken = headrs.authorization;
+  const accessToken = headers.authorization;
 
   //  get profile
   const user = await getUserFromDecodedToken({ token: accessToken });
@@ -43,4 +43,19 @@ export const updateProfile = async (headers, updateData) => {
   updatedProfile.phone = decrypt(updatedProfile.phone);
 
   return updatedProfile;
+};
+
+// * Delete account
+export const deleteUserAccount = async (headers) => {
+  //  get access token from headers
+  const accessToken = headers.authorization;
+
+  //  verify token and get payload data
+  const { id } = getPadyloadFromDecodedToken({ token: accessToken });
+
+  //  delete account
+  const state = await userRepositories.deleteOne({ filter: {_id:id} });
+
+
+  return;
 };

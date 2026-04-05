@@ -10,7 +10,6 @@ export const generateToken = ({ payload, secret, options }) => {
 
 
 
-
 export const verifyToken = ({ token, secret, options }) => {
   return jwt.verify(token, secret);
 };
@@ -49,7 +48,6 @@ export const decodeToken = ({ token }) => {
 
 
 
-
 export const getUserFromDecodedToken = ({ token }) => {
   const decodedData = decodeToken({ token });
   //  return user
@@ -62,9 +60,6 @@ export const getPadyloadFromDecodedToken = ({ token }) => {
   const Padyload = decodeToken({ token });
   return Padyload;
 };
-
-
-
 
 
 

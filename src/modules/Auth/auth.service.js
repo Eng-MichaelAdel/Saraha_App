@@ -1,4 +1,4 @@
-import { compareHash, decrypt, encrypt, errorResponse, generateHash, createAccesToken, detectSignitureByRole } from "../../common/utils/index.js";
+import { compareHash, encrypt, errorResponse, generateHash, createAccesToken, detectSignitureByRole } from "../../common/utils/index.js";
 import { UserRepository } from "../../db/repositories/index.js";
 
 //* signup

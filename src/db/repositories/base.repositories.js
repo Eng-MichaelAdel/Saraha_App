@@ -1,3 +1,5 @@
+import { errorResponse } from "../../common/utils/index.js";
+
 export class BaseRepository {
   constructor(model) {
     this.model = model;
@@ -22,7 +24,10 @@ export class BaseRepository {
   }
 
   //*   Find methods
-  findOne({ filter = {}, select = {}, options = {} } = {}) {
+  findOne({ filter, select = {}, options = {} } = {}) {
+    if (!filter || Object.keys(filter).length === 0) {
+      errorResponse({ message: "filter is required ", status: 400 });
+    }
     let query = this.model.findOne(filter, select);
 
     if (options.populate) {
@@ -72,15 +77,24 @@ export class BaseRepository {
   }
 
   //*   Update methods
-  updateOne({ filter = {}, updates, options = {} } = {}) {
+  updateOne({ filter, updates, options = {} } = {}) {
+    if (!filter || Object.keys(filter).length === 0) {
+      errorResponse({ message: "filter is required ", status: 400 });
+    }
     return this.model.updateOne(filter, { ...updates, $inc: { __v: 1 } }, { ...options, runValidators: true });
   }
 
-  updateMany({ filter = {}, updates, options = {} } = {}) {
+  updateMany({ filter, updates, options = {} } = {}) {
+    if (!filter || Object.keys(filter).length === 0) {
+      errorResponse({ message: "filter is required ", status: 400 });
+    }
     return this.model.updateMany(filter, { ...updates, $inc: { __v: 1 } }, { ...options, runValidators: true });
   }
 
-  findOneAndUpdate({ filter = {}, updates, options = {} } = {}) {
+  findOneAndUpdate({ filter, updates, options = {} } = {}) {
+    if (!filter || Object.keys(filter).length === 0) {
+      errorResponse({ message: "filter is required ", status: 400 });
+    }
     return this.model.findOneAndUpdate(filter, { ...updates, $inc: { __v: 1 } }, { ...options, runValidators: true, new: true });
   }
 
@@ -88,20 +102,32 @@ export class BaseRepository {
     return this.model.findByIdAndUpdate(id, { ...updates, $inc: { __v: 1 } }, { ...options, runValidators: true, new: true });
   }
 
-  findOneAndReplace({ filter = {}, updates, options = {} } = {}) {
+  findOneAndReplace({ filter, updates, options = {} } = {}) {
+    if (!filter || Object.keys(filter).length === 0) {
+      errorResponse({ message: "filter is required ", status: 400 });
+    }
     return this.model.findOneAndReplace(filter, { ...updates, $inc: { __v: 1 } }, { ...options, runValidators: true, new: true });
   }
 
   //*   Delete methods
-  deleteOne({ filter = {} } = {}) {
+  deleteOne({ filter } = {}) {
+    if (!filter || Object.keys(filter).length === 0) {
+      errorResponse({ message: "filter is required ", status: 400 });
+    }
     return this.model.deleteOne(filter);
   }
 
-  deleteMany({ filter = {} } = {}) {
+  deleteMany({ filter } = {}) {
+    if (!filter || Object.keys(filter).length === 0) {
+      errorResponse({ message: "filter is required ", status: 400 });
+    }
     return this.model.deleteMany(filter);
   }
 
-  findOneAndDelete({ filter = {} } = {}) {
+  findOneAndDelete({ filter } = {}) {
+    if (!filter || Object.keys(filter).length === 0) {
+      errorResponse({ message: "filter is required ", status: 400 });
+    }
     return this.model.findOneAndDelete(filter);
   }
 
