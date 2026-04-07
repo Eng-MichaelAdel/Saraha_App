@@ -1,9 +1,9 @@
 import express from "express";
 import { PORT } from "../config/config.service.js";
 import dbConnection from "./db/db.connection.js";
-import errorHandler from "./middlewares/global-error-handler.middleware.js";
 import { authRouter } from "./modules/Auth/index.js";
 import { userRouer } from "./modules/User/index.js";
+import { globalErrorHandler } from "./middlewares/index.js";
 
 async function bootstrap() {
   // create app instance from express
@@ -17,7 +17,7 @@ async function bootstrap() {
 
   // application routing
   app.use("/auth", authRouter);
-  app.use("/profile" , userRouer)
+  app.use("/user" , userRouer)
 
   // Invalid app router handler
   app.use("{/*dummy}", (req, res, next) => {
@@ -25,7 +25,7 @@ async function bootstrap() {
   });
 
   //   global error handler
-  app.use(errorHandler);
+  app.use(globalErrorHandler);
   // server config
   const port = PORT;
   app.listen(port, () => {

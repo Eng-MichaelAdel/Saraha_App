@@ -8,60 +8,35 @@ export const generateToken = ({ payload, secret, options }) => {
   return jwt.sign(payload, secret, options);
 };
 
-
-
 export const verifyToken = ({ token, secret, options }) => {
   return jwt.verify(token, secret);
 };
 
-
-
-export const createAccesToken = ({ payload, secret, options }) => {
+export const createLoginCredentials = ({ payload, secret, options }) => {
   const accessToken = generateToken({ payload, secret, options });
   return { accessToken };
 };
 
-
-
-
-export const decodeToken = ({ token }) => {
-  //  check if token is sent in headers
-  if(!token){
-    errorResponse({message:"Authorization token is required"})
-  }
-
+export const decodeToken = async ({ token }) => {
   //  decode token to get role
-  const decodeData = jwt.decode(token);
+  const decodedData = jwt.decode(token);
 
   //  check id and role are sent through payload
-  if (!decodeData.id || !decodeData.role) {
+  if (!decodedData.id || !decodedData.role) {
     return errorResponse({ message: "invalid payload", status: 400 });
   }
 
   //  detect Signiture due to Role
-  const { accessSignature } = detectSignitureByRole(decodeData.role);
+  const { accessSignature } = detectSignitureByRole(decodedData.role);
 
-  //  verify token
-  return verifyToken({ token, secret: accessSignature });
+  //  get user id
+  const { id } = verifyToken({ token, secret: accessSignature });
+
+  //  get user account
+  const user = await userRepositories.findById({ id });
+
+  return user;
 };
-
-
-
-
-export const getUserFromDecodedToken = ({ token }) => {
-  const decodedData = decodeToken({ token });
-  //  return user
-  return userRepositories.findById({ id: decodedData.id });
-};
-
-
-
-export const getPadyloadFromDecodedToken = ({ token }) => {
-  const Padyload = decodeToken({ token });
-  return Padyload;
-};
-
-
 
 export const detectSignitureByRole = (role) => {
   let signature = JWT_SECRETS.user;

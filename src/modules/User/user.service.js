@@ -1,32 +1,25 @@
-import { decrypt, encrypt, errorResponse, getPadyloadFromDecodedToken, getUserFromDecodedToken } from "../../common/utils/index.js";
+import { decodeToken, decrypt, encrypt, errorResponse } from "../../common/utils/index.js";
 import userRepositories from "../../db/repositories/user.repositories.js";
 
 // * get Profile
-export const getUserProfile = async (headers) => {
-  //  get access token from headers
-  const accessToken = headers.authorization;
-
-  //  get profile
-  const user = await getUserFromDecodedToken({ token: accessToken });
-
+export const getUserProfile = async (userProfile) => {
   //  decrypt phone no
-  user.phone = decrypt(user.phone);
+  userProfile.phone = decrypt(userProfile.phone);
 
-  return user;
+  return userProfile;
 };
 
 // * update Profile
-export const updateProfile = async (headers, updateData) => {
-  //  get access token from headers
-  const accessToken = headers.authorization;
-
-  //  verify token and get payload data
-  const { id } = getPadyloadFromDecodedToken({ token: accessToken });
+export const updateProfile = async (userProfile, updateData) => {
+  //  get user id
+  const { _id } = userProfile;
 
   //  check if email already exist in another account
   if (updateData.email) {
     const emailExist = await userRepositories.findOne({ filter: { email: updateData.email }, select: { email: 1 } });
-    if (emailExist && emailExist.id !== id) {
+    // console.log(emailExist.id);
+  
+    if (emailExist && emailExist.id !== _id.toString()) {
       errorResponse({ status: 409, message: "email is already exist" });
     }
   }
@@ -37,7 +30,7 @@ export const updateProfile = async (headers, updateData) => {
   }
 
   //  save all updates and get updated profile data
-  const updatedProfile = await userRepositories.findByIdAndUpdate({ id, updates: { $set: { ...updateData } } });
+  const updatedProfile = await userRepositories.findByIdAndUpdate({ id: _id, updates: { ...updateData } });
 
   //  decrypt phone number for representation of the profile
   updatedProfile.phone = decrypt(updatedProfile.phone);
@@ -51,11 +44,10 @@ export const deleteUserAccount = async (headers) => {
   const accessToken = headers.authorization;
 
   //  verify token and get payload data
-  const { id } = getPadyloadFromDecodedToken({ token: accessToken });
+  const { id } = decodeToken({ token: accessToken });
 
   //  delete account
-  const state = await userRepositories.deleteOne({ filter: {_id:id} });
-
+  const state = await userRepositories.deleteOne({ filter: { _id: id } });
 
   return;
 };

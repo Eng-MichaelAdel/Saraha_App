@@ -1,4 +1,4 @@
-import { compareHash, encrypt, errorResponse, generateHash, createAccesToken, detectSignitureByRole } from "../../common/utils/index.js";
+import { compareHash, encrypt, errorResponse, generateHash, createLoginCredentials, detectSignitureByRole } from "../../common/utils/index.js";
 import { UserRepository } from "../../db/repositories/index.js";
 
 //* signup
@@ -28,7 +28,7 @@ export const signup = async (userInputs) => {
 export const login = async (userInputs) => {
   const { email, password } = userInputs;
 
-  //  check login credintial's validation
+  // ! check login credintial's validation
   const user = await UserRepository.findOne({ filter: { email } });
   if (!user || !(await compareHash(password, user.password))) {
     errorResponse({ status: 404, message: "Invalid Login Credentials" });
@@ -38,7 +38,7 @@ export const login = async (userInputs) => {
   const { accessSignature, accessExp } = detectSignitureByRole(user.role);
 
   //  get acces token
-  const { accessToken } = createAccesToken({
+  const { accessToken } = createLoginCredentials({
     payload: { id: user._id, email: user.email, role: user.role },
     secret: accessSignature,
     options: { expiresIn: accessExp, issuer: "http://localhost:3000", audience: ["web", "mobile"], noTimestamp: true },
