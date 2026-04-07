@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 import userRepositories from "../../../db/repositories/user.repositories.js";
 import { errorResponse } from "../respose/error.response.js";
 import { JWT_SECRETS } from "../../../../config/config.service.js";
-import { roleEnum } from "../../enums/user.enums.js";
+import { roleEnum, tokenTypeEnum } from "../../enums/user.enums.js";
 
 export const generateToken = ({ payload, secret, options }) => {
   return jwt.sign(payload, secret, options);
@@ -12,14 +12,49 @@ export const verifyToken = ({ token, secret, options }) => {
   return jwt.verify(token, secret);
 };
 
-export const createLoginCredentials = ({ payload, secret, options }) => {
-  const accessToken = generateToken({ payload, secret, options });
-  return { accessToken };
+export const createLoginCredentials = ({ payload, options, requiredToken }) => {
+  let accessToken, refreshToken, secret;
+  switch (requiredToken) {
+    case tokenTypeEnum.access:
+      secret = detectSignitureByRoleAndTokenType(payload.role, tokenTypeEnum.access);
+      accessToken = generateToken({
+        payload: { ...payload, tokenType: tokenTypeEnum.access },
+        secret,
+        options: options.access,
+      });
+      break;
+
+    case tokenTypeEnum.refresh:
+      secret = detectSignitureByRoleAndTokenType(payload.role, tokenTypeEnum.refresh);
+      refreshToken = generateToken({
+        payload: { ...payload, tokenType: tokenTypeEnum.refresh },
+        secret,
+        options: options.refresh,
+      });
+      break;
+
+    default:
+      secret = detectSignitureByRoleAndTokenType(payload.role);
+      accessToken = generateToken({
+        payload: { ...payload, tokenType: tokenTypeEnum.access },
+        secret: secret.accessSignature,
+        options: options.access,
+      });
+      refreshToken = generateToken({
+        payload: { ...payload, tokenType: tokenTypeEnum.refresh },
+        secret: secret.refreshSignature,
+        options: options.refresh,
+      });
+      break;
+  }
+
+  return { accessToken, refreshToken };
 };
 
 export const decodeToken = async ({ token }) => {
   //  decode token to get role
   const decodedData = jwt.decode(token);
+
 
   //  check id and role are sent through payload
   if (!decodedData.id || !decodedData.role) {
@@ -27,15 +62,24 @@ export const decodeToken = async ({ token }) => {
   }
 
   //  detect Signiture due to Role
-  const { accessSignature } = detectSignitureByRole(decodedData.role);
+  const secret = detectSignitureByRoleAndTokenType(decodedData.role, decodedData.tokenType);
+  
+  if (decodedData.tokenType === tokenTypeEnum.refresh) {
+    console.log(decodedData.tokenType);
+    return {decodedData};
+  }
 
   //  get user id
-  const { id } = verifyToken({ token, secret: accessSignature });
+  const { id } = verifyToken({ token, secret });
 
   //  get user account
-  const user = await userRepositories.findById({ id });
+  const userData = await userRepositories.findById({ id });
+  //  check if user account is available
+  if (!userData) {
+    errorResponse({ message: "invalid user credentials ,please register", status: 404 });
+  }
 
-  return user;
+  return { userData, decodedData };
 };
 
 export const detectSignitureByRole = (role) => {
@@ -44,4 +88,22 @@ export const detectSignitureByRole = (role) => {
     signature = JWT_SECRETS.admin;
   }
   return signature;
+};
+
+export const detectSignitureByRoleAndTokenType = (role, tokenType = tokenTypeEnum.both) => {
+  const signature = detectSignitureByRole(role);
+  let secret;
+  switch (tokenType) {
+    case tokenTypeEnum.access:
+      secret = signature.accessSignature;
+      break;
+    case tokenTypeEnum.refresh:
+      secret = signature.refreshSignature;
+      break;
+    default:
+      secret = signature;
+      break;
+  }
+
+  return secret;
 };

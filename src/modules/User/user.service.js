@@ -18,7 +18,7 @@ export const updateProfile = async (userProfile, updateData) => {
   if (updateData.email) {
     const emailExist = await userRepositories.findOne({ filter: { email: updateData.email }, select: { email: 1 } });
     // console.log(emailExist.id);
-  
+
     if (emailExist && emailExist.id !== _id.toString()) {
       errorResponse({ status: 409, message: "email is already exist" });
     }
@@ -39,15 +39,16 @@ export const updateProfile = async (userProfile, updateData) => {
 };
 
 // * Delete account
-export const deleteUserAccount = async (headers) => {
-  //  get access token from headers
-  const accessToken = headers.authorization;
-
-  //  verify token and get payload data
-  const { id } = decodeToken({ token: accessToken });
+export const deleteUserAccount = async (userProfile) => {
+  //  get the user id from the user profile
+  const { _id } = userProfile;
+  console.log();
+  
 
   //  delete account
-  const state = await userRepositories.deleteOne({ filter: { _id: id } });
+  const state = await userRepositories.deleteOne({ filter: { _id } });
 
+  console.log(state);
+  
   return;
 };

@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { successResponse } from "../../common/utils/index.js";
-import { login, signup } from "./auth.service.js";
+import { login, refreshTokenService, signup } from "./auth.service.js";
+import { authenticate } from "../../middlewares/authentication.middleware.js";
 
 const router = Router();
 
@@ -10,8 +11,15 @@ router.post("/signup", async (req, res, next) => {
 });
 
 router.post("/login", async (req, res, next) => {
-  const Token = await login(req.body);
+  const issuer = `${req.protocol}://${req.host}`
+  const Token = await login(req.body , issuer);
   successResponse({ res, message: "Login Successfully",data:{Token} });
+});
+
+router.post("/refreshToken" ,authenticate, async (req, res, next) => {
+  const issuer = `${req.protocol}://${req.host}`
+  const Token = await refreshTokenService(req.user , issuer);
+  successResponse({ res, message: "Token Refreshed Successfully",data:{Token} });
 });
 
 export default router;
