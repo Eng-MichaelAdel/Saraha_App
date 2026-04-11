@@ -28,6 +28,10 @@ const userSchema = new mongoose.Schema(
     confirmedEmail: Date,
     profielPictuer: String,
     coverProfilePicture: [String],
+    googleSub: {
+      type: String,
+      index: { name: "idx_googleSub_uniqe", unique: true },
+    },
     provider: { type: String, enum: Object.values(providerEnum), default: providerEnum.system },
   },
   {
@@ -39,6 +43,7 @@ const userSchema = new mongoose.Schema(
     toJSON: { virtuals: true },
   },
 );
+
 
 userSchema
   .virtual("userName")

@@ -2,7 +2,6 @@ import { Router } from "express";
 import { successResponse } from "../../common/utils/index.js";
 import { deleteUserAccount, getUserProfile, updateProfile } from "./user.service.js";
 import { authenticate, authorize } from "../../middlewares/index.js";
-import { roleEnum } from "../../common/enums/user.enums.js";
 
 const router = Router();
 

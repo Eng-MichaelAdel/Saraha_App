@@ -37,10 +37,9 @@ export const decodeTokenByAuthType = async (prefix, token) => {
     case "Bearer":
       //  decode , verify and return user account
       userData = await decodeToken({ token });
-      
       break;
-
     default:
+      errorResponse({message:"missing authentication schema " , status:401})
       break;
   }
 

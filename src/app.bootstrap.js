@@ -1,9 +1,11 @@
+import cors from "cors";
 import express from "express";
 import { PORT } from "../config/config.service.js";
 import dbConnection from "./db/db.connection.js";
 import { authRouter } from "./modules/Auth/index.js";
 import { userRouer } from "./modules/User/index.js";
 import { globalErrorHandler } from "./middlewares/index.js";
+import { corsOptions } from "../config/cors.config.js";
 
 async function bootstrap() {
   // create app instance from express
@@ -11,13 +13,16 @@ async function bootstrap() {
 
   // Database Connection
   dbConnection();
-  
+
+  //  cors
+  app.use(cors(corsOptions));
+
   // parse body to JSON
   app.use(express.json());
 
   // application routing
   app.use("/auth", authRouter);
-  app.use("/user" , userRouer)
+  app.use("/user", userRouer);
 
   // Invalid app router handler
   app.use("{/*dummy}", (req, res, next) => {

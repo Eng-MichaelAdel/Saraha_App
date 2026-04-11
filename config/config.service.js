@@ -20,12 +20,24 @@ export const SALT_ROUND = parseInt(process.env.SALT_ROUND) ?? 12;
 
 // jwt secrets
 export const JWT_SECRETS = {
-  user: { accessSignature: process.env.USER_JWT_ACCESS_SECRET,
-          accessExp: process.env.USER_JWT_ACCESS_EXP,
-          refreshSignature: process.env.USER_JWT_REFRESH_SECRET,
-          refreshExp: process.env.USER_JWT_REFRESH_EXP },
-  admin: { accessSignature: process.env.ADMIN_JWT_ACCESS_SECRET,
-           accessExp: process.env.ADMIN_JWT_ACCESS_EXP,
-           refreshSignature: process.env.ADMIN_JWT_REFRESH_SECRET,
-           refreshExp: process.env.ADMIN_JWT_REFRESH_EXP },
+  user: {
+    accessSignature: process.env.USER_JWT_ACCESS_SECRET,
+    accessExp: process.env.USER_JWT_ACCESS_EXP,
+    refreshSignature: process.env.USER_JWT_REFRESH_SECRET,
+    refreshExp: process.env.USER_JWT_REFRESH_EXP,
+  },
+  admin: {
+    accessSignature: process.env.ADMIN_JWT_ACCESS_SECRET,
+    accessExp: process.env.ADMIN_JWT_ACCESS_EXP,
+    refreshSignature: process.env.ADMIN_JWT_REFRESH_SECRET,
+    refreshExp: process.env.ADMIN_JWT_REFRESH_EXP,
+  },
+};
+
+// cors
+export const CORS_WHITELIST_ORIGIN = process.env.CORS_WHITELIST_ORIGIN.split(",");
+
+// GCP
+export const gcp = {
+  WEB_CLIENT_ID: process.env.GCP_CLIENT_ID,
 };

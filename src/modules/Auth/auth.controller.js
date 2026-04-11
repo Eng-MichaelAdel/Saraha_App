@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { successResponse } from "../../common/utils/index.js";
-import { login, refreshTokenService, signup } from "./auth.service.js";
+import { gmailLogInService, gmailRegisterService, login, refreshTokenService, signup } from "./auth.service.js";
 import { authenticate } from "../../middlewares/authentication.middleware.js";
 
 const router = Router();
@@ -11,15 +11,29 @@ router.post("/signup", async (req, res, next) => {
 });
 
 router.post("/login", async (req, res, next) => {
-  const issuer = `${req.protocol}://${req.host}`
-  const Token = await login(req.body , issuer);
-  successResponse({ res, message: "Login Successfully",data:{Token} });
+  const issuer = `${req.protocol}://${req.host}`;
+  const Token = await login(req.body, issuer);
+  successResponse({ res, message: "Login Successfully", data: { Token } });
 });
 
-router.post("/refreshToken" ,authenticate, async (req, res, next) => {
-  const issuer = `${req.protocol}://${req.host}`
-  const Token = await refreshTokenService(req.user , issuer);
-  successResponse({ res, message: "Token Refreshed Successfully",data:{Token} });
+router.post("/refreshToken", authenticate, async (req, res, next) => {
+  const issuer = `${req.protocol}://${req.host}`;
+  const Token = await refreshTokenService(req.user, issuer);
+  successResponse({ res, message: "Token Refreshed Successfully", data: { Token } });
+});
+
+router.post("/gmail/register", async (req, res, next) => {
+  const issuer = `${req.protocol}://${req.host}`;
+  const data = await gmailRegisterService(req.body, issuer);
+
+  successResponse({ res, message: "User reqgistered successfully", data: { credentials: data } });
+});
+
+router.post("/gmail/login", async (req, res, next) => {
+  const issuer = `${req.protocol}://${req.host}`;
+  const data = await gmailLogInService(req.body, issuer);
+
+  successResponse({ res, message: "User Loggen in successfully", data: { credentials: data } });
 });
 
 export default router;

@@ -1,10 +1,12 @@
-import { decodeToken, decrypt, encrypt, errorResponse } from "../../common/utils/index.js";
+import { decrypt, encrypt, errorResponse } from "../../common/utils/index.js";
 import userRepositories from "../../db/repositories/user.repositories.js";
 
 // * get Profile
 export const getUserProfile = async (userProfile) => {
-  //  decrypt phone no
-  userProfile.phone = decrypt(userProfile.phone);
+  if (userProfile.phone) {
+    //  decrypt phone no
+    userProfile.phone = decrypt(userProfile.phone);
+  }
 
   return userProfile;
 };
@@ -43,12 +45,11 @@ export const deleteUserAccount = async (userProfile) => {
   //  get the user id from the user profile
   const { _id } = userProfile;
   console.log();
-  
 
   //  delete account
   const state = await userRepositories.deleteOne({ filter: { _id } });
 
   console.log(state);
-  
+
   return;
 };

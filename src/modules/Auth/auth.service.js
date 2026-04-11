@@ -1,7 +1,11 @@
-import { JWT_SECRETS } from "../../../config/config.service.js";
-import { tokenTypeEnum } from "../../common/enums/user.enums.js";
-import { compareHash, encrypt, errorResponse, generateHash, createLoginCredentials, detectSignitureByRole } from "../../common/utils/index.js";
+import { gcp, JWT_SECRETS } from "../../../config/config.service.js";
+import { providerEnum, tokenTypeEnum } from "../../common/enums/user.enums.js";
+import { compareHash, encrypt, errorResponse, generateHash, createLoginCredentials } from "../../common/utils/index.js";
 import { UserRepository } from "../../db/repositories/index.js";
+import { OAuth2Client } from "google-auth-library";
+import userRepositories from "../../db/repositories/user.repositories.js";
+import crypto from "crypto";
+const client = new OAuth2Client();
 
 //* signup
 export const signup = async (userInputs) => {
@@ -36,14 +40,8 @@ export const login = async (userInputs, issuer) => {
     errorResponse({ status: 404, message: "Invalid Login Credentials" });
   }
 
-  //  create access and refresh token
-  const { accessToken, refreshToken } = createLoginCredentials({
-    payload: { id: user._id, email: user.email, role: user.role },
-    options: {
-      access: { expiresIn: JWT_SECRETS[user.role].accessExp, issuer, audience: ["web", "mobile"], noTimestamp: true },
-      refresh: { expiresIn: JWT_SECRETS[user.role].refreshExp, issuer, audience: ["web", "mobile"], noTimestamp: true },
-    },
-  });
+  //  generate access and refresh token
+  const { accessToken, refreshToken } = buildTokens(user, issuer);
 
   return { accessToken, refreshToken };
 };
@@ -51,7 +49,7 @@ export const login = async (userInputs, issuer) => {
 // * Refresh Token
 export const refreshTokenService = (userData, issuer) => {
   const { decodedData } = userData;
-  
+
   //  create access and refresh token
   const { accessToken } = createLoginCredentials({
     payload: { id: decodedData.id, email: decodedData.email, role: decodedData.role },
@@ -63,4 +61,107 @@ export const refreshTokenService = (userData, issuer) => {
   });
 
   return { accessToken };
+};
+
+// * Gmail Registertion
+export const gmailRegisterService = async (body, issuer) => {
+  const { idToken } = body;
+
+  // verify gcp idToken
+  const payload = await verifyGcpIdToken(idToken);
+
+  //  find if the accunt is exist
+  const user = await userRepositories.findOne({
+    filter: {
+      $or: [{ googleSup: payload.sub }, { email: payload.email }],
+      provider: providerEnum.google,
+    },
+  });
+
+  //  update the user account if exist else create a new one
+  const userData = await handleUpdateOrCreateGoogleAccount(user, payload);
+
+  //  generate access and refresh token
+  const { accessToken, refreshToken } = buildTokens(userData, issuer);
+
+  return { accessToken, refreshToken };
+};
+
+// * Gmail Login
+export const gmailLogInService = async (body, issuer) => {
+  const { idToken } = body;
+
+  // verify gcp idToken
+  const payload = await verifyGcpIdToken(idToken);
+
+  //  find if the accunt is exist
+  const user = await userRepositories.findOne({
+    filter: {
+      $or: [{ googleSup: payload.sub }, { email: payload.email }],
+      provider: providerEnum.google,
+    },
+  });
+
+  if (!user) {
+    errorResponse({ message: "user not registered", status: 404 });
+  }
+
+  //  generate access and refresh token
+  const { accessToken, refreshToken } = buildTokens(user, issuer);
+
+  return { accessToken, refreshToken };
+};
+
+
+
+const verifyGcpIdToken = async (idToken) => {
+  const ticket = await client.verifyIdToken({
+    idToken,
+    audience: gcp.WEB_CLIENT_ID,
+  });
+  const payload = ticket.getPayload();
+
+  if (!payload || !payload.email_verified) {
+    errorResponse({ message: "you acount is not authorized ,please contact google service", status: 401 });
+  }
+  return payload;
+};
+
+const handleUpdateOrCreateGoogleAccount = async (user, payload) => {
+  const { given_name, family_name, email, picture, sub } = payload;
+  if (user) {
+    return await userRepositories.findByIdAndUpdate({
+      id: user.id,
+      updates: {
+        firstName: given_name,
+        lastName: family_name,
+        email,
+        profielPictuer: picture,
+      },
+    });
+  } else {
+    const hashedPassword = await generateHash(crypto.randomBytes(12).toString("hex"));
+    return await userRepositories.createOne({
+      data: {
+        googleSub: sub,
+        firstName: given_name,
+        lastName: family_name,
+        email,
+        profielPictuer: picture,
+        password: hashedPassword,
+        provider: providerEnum.google,
+      },
+    });
+  }
+};
+
+const buildTokens = (userData, issuer) => {
+  const Credentials = createLoginCredentials({
+    payload: { id: userData._id, email: userData.email, role: userData.role },
+    options: {
+      access: { expiresIn: JWT_SECRETS[userData.role].accessExp, issuer, audience: ["web", "mobile"], noTimestamp: true },
+      refresh: { expiresIn: JWT_SECRETS[userData.role].refreshExp, issuer, audience: ["web", "mobile"], noTimestamp: true },
+    },
+  });
+  return Credentials;
 };
