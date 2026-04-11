@@ -1,4 +1,4 @@
-import { decrypt, encrypt, errorResponse } from "../../common/utils/index.js";
+import { ConflictException, decrypt, encrypt } from "../../common/utils/index.js";
 import userRepositories from "../../db/repositories/user.repositories.js";
 
 // * get Profile
@@ -22,7 +22,8 @@ export const updateProfile = async (userProfile, updateData) => {
     // console.log(emailExist.id);
 
     if (emailExist && emailExist.id !== _id.toString()) {
-      errorResponse({ status: 409, message: "email is already exist" });
+      throw new ConflictException("email is already exist");
+      ;
     }
   }
 

@@ -1,6 +1,15 @@
 import { gcp, JWT_SECRETS } from "../../../config/config.service.js";
 import { providerEnum, tokenTypeEnum } from "../../common/enums/user.enums.js";
-import { compareHash, encrypt, errorResponse, generateHash, createLoginCredentials } from "../../common/utils/index.js";
+import {
+  compareHash,
+  encrypt,
+  generateHash,
+  createLoginCredentials,
+  UnauthorizedException,
+  ConflictException,
+  NotFoundException,
+  ForbiddenException,
+} from "../../common/utils/index.js";
 import { UserRepository } from "../../db/repositories/index.js";
 import { OAuth2Client } from "google-auth-library";
 import userRepositories from "../../db/repositories/user.repositories.js";
@@ -14,7 +23,7 @@ export const signup = async (userInputs) => {
   console.log(userInputs.email);
 
   if (emailExist) {
-    errorResponse({ status: 409, message: "email is already exist" });
+    throw new ConflictException("email is already exist");
   }
 
   //  hash password
@@ -37,7 +46,7 @@ export const login = async (userInputs, issuer) => {
   //  check login credintial's validation
   const user = await UserRepository.findOne({ filter: { email } });
   if (!user || !(await compareHash(password, user.password))) {
-    errorResponse({ status: 404, message: "Invalid Login Credentials" });
+    throw new UnauthorizedException("Invalid Login Credentials", {});
   }
 
   //  generate access and refresh token
@@ -103,7 +112,7 @@ export const gmailLogInService = async (body, issuer) => {
   });
 
   if (!user) {
-    errorResponse({ message: "user not registered", status: 404 });
+    throw new NotFoundException("user not registered");
   }
 
   //  generate access and refresh token
@@ -112,8 +121,6 @@ export const gmailLogInService = async (body, issuer) => {
   return { accessToken, refreshToken };
 };
 
-
-
 const verifyGcpIdToken = async (idToken) => {
   const ticket = await client.verifyIdToken({
     idToken,
@@ -121,8 +128,10 @@ const verifyGcpIdToken = async (idToken) => {
   });
   const payload = ticket.getPayload();
 
-  if (!payload || !payload.email_verified) {
-    errorResponse({ message: "you acount is not authorized ,please contact google service", status: 401 });
+  if (!payload) {
+    throw new UnauthorizedException("Invalid token");
+  } else if (!payload.email_verified) {
+    throw new ForbiddenException("Email not verified");
   }
   return payload;
 };

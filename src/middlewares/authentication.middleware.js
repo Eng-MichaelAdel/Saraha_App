@@ -1,4 +1,4 @@
-import { decodeToken, errorResponse } from "../common/utils/index.js";
+import { decodeToken, UnauthorizedException } from "../common/utils/index.js";
 
 export const authenticate = async (req, res, next) => {
 
@@ -9,13 +9,15 @@ export const authenticate = async (req, res, next) => {
   
   //  check if token is sent in headers
   if (!authorization) {
-    errorResponse({ message: "Authorization token is required" });
+    throw new UnauthorizedException("Authorization token is required");
+    ;
   }
 
   //  detect the type of authorization token
   const [prefix, token] = authorization.split(" ");
   if (prefix !== "Bearer") {
-    errorResponse({ message: "invalid Authorization type , Expected Bearer token", status: 401 });
+    throw new UnauthorizedException("invalid Authorization type , Expected Bearer token");
+    ;
   }
 
   //  decode user data according to the authorization type
@@ -39,7 +41,7 @@ export const decodeTokenByAuthType = async (prefix, token) => {
       userData = await decodeToken({ token });
       break;
     default:
-      errorResponse({message:"missing authentication schema " , status:401})
+      throw new UnauthorizedException("invalid Authorization type , Expected Bearer token");
       break;
   }
 

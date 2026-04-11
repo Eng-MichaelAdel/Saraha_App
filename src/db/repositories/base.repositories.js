@@ -1,4 +1,4 @@
-import { errorResponse } from "../../common/utils/index.js";
+import { BadRequestException} from "../../common/utils/index.js";
 
 export class BaseRepository {
   constructor(model) {
@@ -26,7 +26,8 @@ export class BaseRepository {
   //*   Find methods
   findOne({ filter, select = {}, options = {} } = {}) {
     if (!filter || Object.keys(filter).length === 0) {
-      errorResponse({ message: "filter is required ", status: 400 });
+      throw new BadRequestException("filter is required");
+      ;
     }
     let query = this.model.findOne(filter, select);
 
@@ -79,21 +80,21 @@ export class BaseRepository {
   //*   Update methods
   updateOne({ filter, updates, options = {} } = {}) {
     if (!filter || Object.keys(filter).length === 0) {
-      errorResponse({ message: "filter is required ", status: 400 });
+      throw new BadRequestException("filter is required");
     }
     return this.model.updateOne(filter, { ...updates, $inc: { __v: 1 } }, { ...options, runValidators: true });
   }
 
   updateMany({ filter, updates, options = {} } = {}) {
     if (!filter || Object.keys(filter).length === 0) {
-      errorResponse({ message: "filter is required ", status: 400 });
+      throw new BadRequestException("filter is required");
     }
     return this.model.updateMany(filter, { ...updates, $inc: { __v: 1 } }, { ...options, runValidators: true });
   }
 
   findOneAndUpdate({ filter, updates, options = {} } = {}) {
     if (!filter || Object.keys(filter).length === 0) {
-      errorResponse({ message: "filter is required ", status: 400 });
+      throw new BadRequestException("filter is required");
     }
     return this.model.findOneAndUpdate(filter, { ...updates, $inc: { __v: 1 } }, { ...options, runValidators: true, new: true });
   }
@@ -104,7 +105,7 @@ export class BaseRepository {
 
   findOneAndReplace({ filter, updates, options = {} } = {}) {
     if (!filter || Object.keys(filter).length === 0) {
-      errorResponse({ message: "filter is required ", status: 400 });
+      throw new BadRequestException("filter is required");
     }
     return this.model.findOneAndReplace(filter, { ...updates, $inc: { __v: 1 } }, { ...options, runValidators: true, new: true });
   }
@@ -112,21 +113,21 @@ export class BaseRepository {
   //*   Delete methods
   deleteOne({ filter } = {}) {
     if (!filter || Object.keys(filter).length === 0) {
-      errorResponse({ message: "filter is required ", status: 400 });
+      throw new BadRequestException("filter is required");
     }
     return this.model.deleteOne(filter);
   }
 
   deleteMany({ filter } = {}) {
     if (!filter || Object.keys(filter).length === 0) {
-      errorResponse({ message: "filter is required ", status: 400 });
+      throw new BadRequestException("filter is required");
     }
     return this.model.deleteMany(filter);
   }
 
   findOneAndDelete({ filter } = {}) {
     if (!filter || Object.keys(filter).length === 0) {
-      errorResponse({ message: "filter is required ", status: 400 });
+      throw new BadRequestException("filter is required");
     }
     return this.model.findOneAndDelete(filter);
   }

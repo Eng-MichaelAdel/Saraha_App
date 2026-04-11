@@ -1,8 +1,8 @@
 import jwt from "jsonwebtoken";
 import userRepositories from "../../../db/repositories/user.repositories.js";
-import { errorResponse } from "../respose/error.response.js";
 import { JWT_SECRETS } from "../../../../config/config.service.js";
 import { roleEnum, tokenTypeEnum } from "../../enums/user.enums.js";
+import { NotFoundException, UnauthorizedException } from "../respose/exceptions.error.js";
 
 export const generateToken = ({ payload, secret, options }) => {
   return jwt.sign(payload, secret, options);
@@ -58,14 +58,14 @@ export const decodeToken = async ({ token }) => {
 
   //  check id and role are sent through payload
   if (!decodedData.id || !decodedData.role) {
-    return errorResponse({ message: "invalid payload", status: 400 });
+    throw new UnauthorizedException("invalid payload");
+    ;
   }
 
   //  detect Signiture due to Role
   const secret = detectSignitureByRoleAndTokenType(decodedData.role, decodedData.tokenType);
   
   if (decodedData.tokenType === tokenTypeEnum.refresh) {
-    console.log(decodedData.tokenType);
     return {decodedData};
   }
 
@@ -76,7 +76,8 @@ export const decodeToken = async ({ token }) => {
   const userData = await userRepositories.findById({ id });
   //  check if user account is available
   if (!userData) {
-    errorResponse({ message: "invalid user credentials ,please register", status: 404 });
+    throw new NotFoundException("invalid user credentials ,please register");
+    ;
   }
 
   return { userData, decodedData };
