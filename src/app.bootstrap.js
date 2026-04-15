@@ -6,6 +6,7 @@ import { authRouter } from "./modules/Auth/index.js";
 import { userRouer } from "./modules/User/index.js";
 import { globalErrorHandler } from "./middlewares/index.js";
 import { corsOptions } from "../config/cors.config.js";
+import path from "node:path";
 
 async function bootstrap() {
   // create app instance from express
@@ -16,6 +17,10 @@ async function bootstrap() {
 
   //  cors
   app.use(cors(corsOptions));
+
+  // apploads middleware
+  const uploadsPath = "D:/FullStack Sessions/Back End/Assignment/Saraha_App/uploads"
+  app.use("/uploads", express.static(uploadsPath));
 
   // parse body to JSON
   app.use(express.json());

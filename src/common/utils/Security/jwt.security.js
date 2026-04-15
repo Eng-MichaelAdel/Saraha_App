@@ -58,14 +58,13 @@ export const decodeToken = async ({ token }) => {
   //  check id and role are sent through payload
   if (!decodedData.id || !decodedData.role) {
     throw new UnauthorizedException("invalid payload");
-    ;
   }
 
   //  detect Signiture due to Role
   const secret = detectSignitureByRoleAndTokenType(decodedData.role, decodedData.tokenType);
-  
+
   if (decodedData.tokenType === tokenTypeEnum.refresh) {
-    return {decodedData};
+    return { decodedData };
   }
 
   //  get user id
@@ -76,7 +75,6 @@ export const decodeToken = async ({ token }) => {
   //  check if user account is available
   if (!userData) {
     throw new NotFoundException("invalid user credentials ,please register");
-    ;
   }
 
   return { userData, decodedData };

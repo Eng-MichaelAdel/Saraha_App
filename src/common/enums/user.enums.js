@@ -1,3 +1,5 @@
+import { application } from "express";
+
 export const genderEnum = {
   male: "male",
   female: "female",
@@ -22,5 +24,11 @@ export const statusEnum = {
 export const tokenTypeEnum = {
   access: "access",
   refresh: "refresh",
-  both:"both"
+  both: "both",
+};
+
+export const filesExtentions = {
+  image: ["jpg", "jpeg", "png", "gif", "webp", "svg", "bmp", "tiff", "ico"],
+  video: ["mp4", "mkv", "avi", "mov", "wmv", "flv", "webm", "mpeg", "mpg"],
+  application: ["pdf", "doc", "docx", "xls", "xlsx", "ppt", "pptx", "txt", "rtf"],
 };

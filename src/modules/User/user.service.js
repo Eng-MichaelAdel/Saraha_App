@@ -23,7 +23,6 @@ export const updateProfile = async (userProfile, updateData) => {
 
     if (emailExist && emailExist.id !== _id.toString()) {
       throw new ConflictException("email is already exist");
-      ;
     }
   }
 
@@ -38,6 +37,20 @@ export const updateProfile = async (userProfile, updateData) => {
   //  decrypt phone number for representation of the profile
   updatedProfile.phone = decrypt(updatedProfile.phone);
 
+  return updatedProfile;
+};
+
+// * update Profile Pic
+export const upploadProfilePic = async (userProfile, fileData) => {
+  //  get user id
+  const { _id } = userProfile;
+
+  if (!fileData || !fileData.path) {
+    throw new BadRequestException("File is required");
+  }
+
+  //  supdate profile pic and return the updated user profile
+  const updatedProfile = await userRepositories.findByIdAndUpdate({ id: _id, updates: { profielPictuer: fileData.path } });
   return updatedProfile;
 };
 

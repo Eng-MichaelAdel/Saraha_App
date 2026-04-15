@@ -7,7 +7,7 @@ export const generateHash = async (plainText) => {
 
 export const compareHash = async (password, hashedPassword) => {
   let match = false;
-  
+
   if (await compare(password, hashedPassword)) {
     match = true;
   }

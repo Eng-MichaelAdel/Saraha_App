@@ -15,12 +15,10 @@ export const authenticate = async (req, res, next) => {
   const [prefix, token] = authorization.split(" ");
   if (prefix !== "Bearer") {
     throw new UnauthorizedException("invalid Authorization type , Expected Bearer token");
-    ;
   }
 
   //  decode user data according to the authorization type
   const userData = await decodeTokenByAuthType(prefix, token);
-  
   
   req.user = userData;
   next();
