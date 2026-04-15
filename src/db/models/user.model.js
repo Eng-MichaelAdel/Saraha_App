@@ -19,13 +19,13 @@ const userSchema = new mongoose.Schema(
     },
     email: { type: String, required: true, index: { name: "email_unique", unique: true } },
     password: { type: String, required: true },
+    confirmedPassword: String,
     phone: String,
 
     gender: { type: String, enum: { values: Object.values(genderEnum), message: "{VALUE} is not a valid gender" }, default: genderEnum.male },
     role: { type: String, enum: Object.values(roleEnum), default: roleEnum.user },
     status: { type: String, enum: Object.values(statusEnum), default: statusEnum.active },
 
-    confirmedEmail: Date,
     profielPictuer: String,
     coverProfilePicture: [String],
     googleSub: {

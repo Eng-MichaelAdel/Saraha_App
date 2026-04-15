@@ -55,7 +55,6 @@ export const decodeToken = async ({ token }) => {
   //  decode token to get role
   const decodedData = jwt.decode(token);
 
-
   //  check id and role are sent through payload
   if (!decodedData.id || !decodedData.role) {
     throw new UnauthorizedException("invalid payload");

@@ -4,8 +4,6 @@ export const authenticate = async (req, res, next) => {
 
   //  get access token from headers
   const { authorization } = req.headers;
-
-  console.log(authorization);
   
   //  check if token is sent in headers
   if (!authorization) {

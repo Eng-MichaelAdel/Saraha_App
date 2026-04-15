@@ -2,15 +2,17 @@ import { Router } from "express";
 import { successResponse } from "../../common/utils/index.js";
 import { gmailLogInService, gmailRegisterService, login, refreshTokenService, signup } from "./auth.service.js";
 import { authenticate } from "../../middlewares/authentication.middleware.js";
+import { validation } from "../../middlewares/index.js";
+import { loginSchema, signupSchema } from "../../validators/auth.validator.js";
 
 const router = Router();
 
-router.post("/signup", async (req, res, next) => {
+router.post("/signup", validation(signupSchema), async (req, res, next) => {
   const user = await signup(req.body);
   successResponse({ res, status: 201, message: "user added successfully", data: { user } });
 });
 
-router.post("/login", async (req, res, next) => {
+router.post("/login", validation(loginSchema), async (req, res, next) => {
   const issuer = `${req.protocol}://${req.host}`;
   const Token = await login(req.body, issuer);
   successResponse({ res, message: "Login Successfully", data: { Token } });

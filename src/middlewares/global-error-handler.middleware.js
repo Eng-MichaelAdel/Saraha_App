@@ -11,11 +11,11 @@ const errorHandler = (error, req, res, next) => {
     success: false,
     message,
     statusCode: status,
-    error_stack: NODE_ENV === "development" ? error.stack : undefined,
     error: {
       type: error.type,
       details: error.details,
     },
+    error_stack: NODE_ENV === "development" ? error.stack : undefined,
   });
 };
 
