@@ -3,18 +3,18 @@ import { generalValidators } from "../common/utils/index.js";
 
 export const loginSchema = {
   body: Joi.object({
-    email: generalValidators.email.required(),
-    password: generalValidators.password.required(),
+    email: generalValidators.user.email.required(),
+    password: generalValidators.user.password.required(),
   }),
 };
 
 export const signupSchema = {
   body: loginSchema.body.append({
-    firstName: generalValidators.firstName.required(),
-    lastName: generalValidators.lastName.required(),
-    confirmedPassword: generalValidators.confirmedPassword.required(),
-    phone: generalValidators.phone.required(),
-    gender: generalValidators.gender.required(),
-    role: generalValidators.role,
+    firstName: generalValidators.user.firstName.required(),
+    lastName: generalValidators.user.lastName.required(),
+    confirmedPassword: generalValidators.user.confirmedPassword.required(),
+    phone: generalValidators.user.phone.required(),
+    gender: generalValidators.user.gender.required(),
+    role: generalValidators.user.role,
   }),
 };

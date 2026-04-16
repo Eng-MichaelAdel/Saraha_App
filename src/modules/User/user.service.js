@@ -1,4 +1,4 @@
-import { ConflictException, decrypt, encrypt } from "../../common/utils/index.js";
+import { BadRequestException, ConflictException, decrypt, encrypt } from "../../common/utils/index.js";
 import userRepositories from "../../db/repositories/user.repositories.js";
 
 // * get Profile
@@ -52,6 +52,29 @@ export const upploadProfilePic = async (userProfile, fileData) => {
   //  supdate profile pic and return the updated user profile
   const updatedProfile = await userRepositories.findByIdAndUpdate({ id: _id, updates: { profielPictuer: fileData.path } });
   return updatedProfile;
+};
+
+// * update Profile cover Pics
+export const upploadProfileCover = async (userProfile, fileData) => {
+  //  get user id
+  const { _id } = userProfile;
+
+  if (!fileData) {
+    throw new BadRequestException("File is required");
+  }
+
+  const coverPicPaths = fileData.map(({ path }) => {
+    return path;
+  });
+
+  //  supdate profile pic and return the updated user profile
+  const updatedProfile = await userRepositories.findByIdAndUpdate({ id: _id, updates: { coverProfilePicture: coverPicPaths } });
+  return updatedProfile;
+};
+
+// * get Shared Profile
+export const getSharedProfile = async (userId) => {
+  return userRepositories.findById({ id: userId });
 };
 
 // * Delete account

@@ -3,10 +3,11 @@ import fs, { existsSync } from "node:fs";
 import { filesExtentions } from "../common/enums/user.enums.js";
 import { resolve } from "node:path";
 
-export const multerLocal = (type) => {
+
+export const multerLocal = (path) => {
   const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-      const fullPath = `../uploads/${type}`;
+      const fullPath = `../uploads/${path}`;
       if (!existsSync(fullPath)) {
         fs.mkdirSync(fullPath, { recursive: true });
       }
@@ -14,8 +15,9 @@ export const multerLocal = (type) => {
     },
 
     filename: function (req, file, cb) {
+
       const sullfex = Date.now();
-      cb(null, sullfex + "." + file.fieldname);
+      cb(null, sullfex + "-" + file.originalname);
     },
   });
 
@@ -34,3 +36,4 @@ export const multerLocal = (type) => {
 
   return multer({ fileFilter, storage, limits });
 };
+
