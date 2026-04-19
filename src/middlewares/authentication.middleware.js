@@ -1,14 +1,12 @@
 import { decodeToken, UnauthorizedException } from "../common/utils/index.js";
 
 export const authenticate = async (req, res, next) => {
-
   //  get access token from headers
   const { authorization } = req.headers;
-  
+
   //  check if token is sent in headers
   if (!authorization) {
     throw new UnauthorizedException("Authorization token is required");
-    ;
   }
 
   //  detect the type of authorization token
@@ -18,9 +16,12 @@ export const authenticate = async (req, res, next) => {
   }
 
   //  decode user data according to the authorization type
-  const userData = await decodeTokenByAuthType(prefix, token);
-  
-  req.user = userData;
+  const { userData, decodedData } = await decodeTokenByAuthType(prefix, token);
+
+  if (userData) {
+    req.user = userData;
+  }
+  req.decode = decodedData;
   next();
 };
 

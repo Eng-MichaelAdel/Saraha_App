@@ -20,7 +20,7 @@ router.post("/login", validation(loginSchema), async (req, res, next) => {
 
 router.post("/refreshToken", authenticate, async (req, res, next) => {
   const issuer = `${req.protocol}://${req.host}`;
-  const Token = await refreshTokenService(req.user, issuer);
+  const Token = await refreshTokenService(req.decode, issuer);
   successResponse({ res, message: "Token Refreshed Successfully", data: { Token } });
 });
 

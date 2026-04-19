@@ -48,9 +48,8 @@ export const login = async (userInputs, issuer) => {
 };
 
 // * Refresh Token
-export const refreshTokenService = (userData, issuer) => {
-  const { decodedData } = userData;
-
+export const refreshTokenService = (decodedData, issuer) => {
+  
   //  create access and refresh token
   const { accessToken } = createLoginCredentials({
     payload: { id: decodedData.id, email: decodedData.email, role: decodedData.role },
