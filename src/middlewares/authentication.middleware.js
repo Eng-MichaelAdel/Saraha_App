@@ -1,4 +1,4 @@
-import { decodeToken, UnauthorizedException } from "../common/utils/index.js";
+import { decodeToken, UnauthorizedException } from "../common/index.js";
 
 export const authenticate = async (req, res, next) => {
   //  get access token from headers

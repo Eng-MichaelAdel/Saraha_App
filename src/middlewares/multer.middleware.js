@@ -1,6 +1,6 @@
 import multer from "multer";
 import fs, { existsSync } from "node:fs";
-import { filesExtentions } from "../common/enums/user.enums.js";
+import { filesExtentions } from "../common/index.js";
 import { resolve } from "node:path";
 
 

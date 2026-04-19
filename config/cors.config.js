@@ -1,4 +1,4 @@
-import {  ForbiddenException } from "../src/common/utils/index.js";
+import {  ForbiddenException } from "../src/common/index.js";
 import { CORS_WHITELIST_ORIGIN } from "./config.service.js";
 
 const whiteListOrigin = CORS_WHITELIST_ORIGIN;

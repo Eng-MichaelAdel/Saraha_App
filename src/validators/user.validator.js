@@ -1,5 +1,5 @@
 import Joi from "joi";
-import { generalValidators } from "../common/utils/index.js";
+import { generalValidators } from "../common/index.js";
 
 export const updateProfileShcema = {
   body: Joi.object({

@@ -1,5 +1,5 @@
 import { gcp, JWT_SECRETS } from "../../../config/config.service.js";
-import { providerEnum, tokenTypeEnum } from "../../common/enums/user.enums.js";
+import { providerEnum, tokenTypeEnum } from "../../common/index.js";
 import { compareHash, encrypt, generateHash, createLoginCredentials, UnauthorizedException, ConflictException, NotFoundException, ForbiddenException } from "../../common/utils/index.js";
 import { UserRepository } from "../../db/repositories/index.js";
 import { OAuth2Client } from "google-auth-library";

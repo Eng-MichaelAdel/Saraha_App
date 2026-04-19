@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { successResponse } from "../../common/utils/index.js";
+import { successResponse } from "../../common/index.js";
 import { deleteUserAccount, getSharedProfile, getUserProfile, updateProfile, upploadProfileCover, upploadProfilePic } from "./user.service.js";
 import { authenticate, multerLocal, validation } from "../../middlewares/index.js";
 import { SharedProfileSchema, updateProfileImageShcema, updateProfileShcema, uploadCoverPicSchema } from "../../validators/user.validator.js";

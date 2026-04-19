@@ -8,12 +8,16 @@ import { globalErrorHandler } from "./middlewares/index.js";
 import { corsOptions } from "../config/cors.config.js";
 import { resolve } from "node:path";
 
+
 async function bootstrap() {
   // create app instance from express
   const app = express();
 
   // Database Connection
-  dbConnection();
+  await dbConnection();
+
+  // Redis dbConnection
+  await RedisConnection();
 
   //  cors
   app.use(cors(corsOptions));

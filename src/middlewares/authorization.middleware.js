@@ -1,4 +1,4 @@
-import { ForbiddenException } from "../common/utils/index.js";
+import { ForbiddenException } from "../common/index.js";
 
 export const authorize = (roles) => {
   return (req, res, next) => {

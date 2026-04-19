@@ -9,7 +9,10 @@ config({ path: resolve(`./config/.env.${NODE_ENV}`) });
 export const PORT = process.env.PORT ?? "3000";
 
 // Database
+// ---> Mongoose DB (MAIN DB)
 export const DB_URI = process.env.DB_URI ?? "mongodb+srv://Maico89:si7o123456789@cluster0.hosd7nf.mongodb.net/Saraha_App";
+// ---> Redis DB (Service DB)
+export const REDIS_URL = process.env.REDIS_URL;
 
 //  Encryption and Decryption
 export const ENCRYPTION_KEY = process.env.ENCRYPTION_KEY;

@@ -1,4 +1,3 @@
-import { application } from "express";
 
 export const genderEnum = {
   male: "male",

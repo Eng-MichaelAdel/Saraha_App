@@ -1,4 +1,4 @@
-import { BadRequestException} from "../../common/utils/index.js";
+import { BadRequestException} from "../../common/index.js";
 
 export class BaseRepository {
   constructor(model) {

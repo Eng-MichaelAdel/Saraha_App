@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { successResponse } from "../../common/utils/index.js";
+import { successResponse } from "../../common/index.js";
 import { gmailLogInService, gmailRegisterService, login, refreshTokenService, signup } from "./auth.service.js";
 import { authenticate } from "../../middlewares/authentication.middleware.js";
 import { validation } from "../../middlewares/index.js";

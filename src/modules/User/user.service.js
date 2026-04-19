@@ -1,4 +1,4 @@
-import { BadRequestException, ConflictException, decrypt, encrypt } from "../../common/utils/index.js";
+import { BadRequestException, ConflictException, decrypt, encrypt } from "../../common/index.js";
 import userRepositories from "../../db/repositories/user.repositories.js";
 
 // * get Profile
@@ -74,7 +74,11 @@ export const upploadProfileCover = async (userProfile, fileData) => {
 
 // * get Shared Profile
 export const getSharedProfile = async (userId) => {
-  return userRepositories.findById({ id: userId });
+  const userProfile = await userRepositories.findById({ id: userId });  
+  if (!userProfile) {
+    throw new BadRequestException("Invalid userId , user is not found");
+  }
+  return userProfile;
 };
 
 // * Delete account
