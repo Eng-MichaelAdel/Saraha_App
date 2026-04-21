@@ -1,4 +1,4 @@
-import { NODE_ENV } from "../../config/config.service.js";
+import { NODE_ENV } from "../../config/index.js";
 
 const errorHandler = (error, req, res, next) => {
   let status;

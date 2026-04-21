@@ -1,4 +1,4 @@
-import { ENCRYPTION_KEY, IV_LENGTH } from "../../../../config/config.service.js";
+import { ENCRYPTION_KEY, IV_LENGTH } from "../../../../config/index.js";
 import crypto from "crypto";
 
 export const encrypt = (plainText) => {

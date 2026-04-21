@@ -1,4 +1,4 @@
-import { gcp, JWT_SECRETS } from "../../../config/config.service.js";
+import { gcp, JWT_SECRETS } from "../../../config/index.js";
 import { providerEnum, tokenTypeEnum } from "../../common/index.js";
 import { compareHash, encrypt, generateHash, createLoginCredentials, UnauthorizedException, ConflictException, NotFoundException, ForbiddenException } from "../../common/utils/index.js";
 import { UserRepository } from "../../db/repositories/index.js";

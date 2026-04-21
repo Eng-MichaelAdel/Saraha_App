@@ -1,11 +1,11 @@
 import cors from "cors";
 import express from "express";
-import { PORT } from "../config/config.service.js";
+import { PORT } from "../config/index.js";
 import dbConnection from "./db/db.connection.js";
 import { authRouter } from "./modules/Auth/index.js";
 import { userRouer } from "./modules/User/index.js";
 import { globalErrorHandler } from "./middlewares/index.js";
-import { corsOptions } from "../config/cors.config.js";
+import { corsOptions } from "../config/index.js";
 import { resolve } from "node:path";
 import {  RedisConnection } from "./common/index.js";
 

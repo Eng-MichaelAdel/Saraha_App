@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import userRepositories from "../../../db/repositories/user.repositories.js";
-import { JWT_SECRETS } from "../../../../config/config.service.js";
+import { JWT_SECRETS } from "../../../../config/index.js";
 import { roleEnum, tokenTypeEnum } from "../../enums/user.enums.js";
 import { NotFoundException, UnauthorizedException } from "../respose/exceptions.error.js";
 

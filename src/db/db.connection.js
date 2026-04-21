@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { DB_URI } from "../../config/config.service.js";
+import { DB_URI } from "../../config/index.js";
 import { messageModel, userModel } from "./models/index.js";
 
 const dbConnection = async () => {

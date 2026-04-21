@@ -1,5 +1,5 @@
 import { compare, hash } from "bcrypt";
-import { SALT_ROUND } from "../../../../config/config.service.js";
+import { SALT_ROUND } from "../../../../config/index.js";
 
 export const generateHash = async (plainText) => {
   return hash(plainText, SALT_ROUND);
