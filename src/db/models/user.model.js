@@ -28,11 +28,14 @@ const userSchema = new mongoose.Schema(
 
     profielPictuer: String,
     coverProfilePicture: [String],
+
     googleSub: {
       type: String,
       index: { name: "idx_googleSub_uniqe", unique: true, sparse: true },
     },
     provider: { type: String, enum: Object.values(providerEnum), default: providerEnum.system },
+
+    logoutCredentialTime: { type: Date },
   },
   {
     timestamps: true,

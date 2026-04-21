@@ -1,4 +1,4 @@
-import { decodeToken, UnauthorizedException } from "../common/index.js";
+import { decodeToken, NotFoundException, UnauthorizedException } from "../common/index.js";
 
 export const authenticate = async (req, res, next) => {
   //  get access token from headers
@@ -18,16 +18,17 @@ export const authenticate = async (req, res, next) => {
   //  decode user data according to the authorization type
   const { userData, decodedData } = await decodeTokenByAuthType(prefix, token);
 
-  if (userData) {
-    req.user = userData;
-  }
+  // if (userData.logoutCredentialTime.getTime() >= decodedData.iat * 1000) {
+  //   throw new NotFoundException("Invalid login sesssion");
+  // }
+
+  req.user = userData;
   req.decode = decodedData;
   next();
 };
 
 export const decodeTokenByAuthType = async (prefix, token) => {
   let userData;
-
   switch (prefix) {
     case "Basic":
       const [userName, Password] = Buffer.from(token, "base64").toString().split(":");

@@ -2,7 +2,9 @@ import jwt from "jsonwebtoken";
 import userRepositories from "../../../db/repositories/user.repositories.js";
 import { JWT_SECRETS } from "../../../../config/index.js";
 import { roleEnum, tokenTypeEnum } from "../../enums/user.enums.js";
-import { NotFoundException, UnauthorizedException } from "../respose/exceptions.error.js";
+import { BadRequestException, NotFoundException, UnauthorizedException } from "../respose/exceptions.error.js";
+import { get } from "../../services/redis.service.js";
+import { RevokenKeyFormat } from './../../../modules/Auth/auth.service.js';
 
 export const generateToken = ({ payload, secret, options }) => {
   return jwt.sign(payload, secret, options);
@@ -60,12 +62,11 @@ export const decodeToken = async ({ token }) => {
     throw new UnauthorizedException("invalid payload");
   }
 
+  if (await get(RevokenKeyFormat(decodedData.id,decodedData.jti))) {
+    throw new BadRequestException("Invalid login sesssion ,login again");
+  }
   //  detect Signiture due to Role
   const secret = detectSignitureByRoleAndTokenType(decodedData.role, decodedData.tokenType);
-
-  if (decodedData.tokenType === tokenTypeEnum.refresh) {
-    return { decodedData };
-  }
 
   //  get user id
   const { id } = verifyToken({ token, secret });
@@ -75,6 +76,11 @@ export const decodeToken = async ({ token }) => {
   //  check if user account is available
   if (!userData) {
     throw new NotFoundException("invalid user credentials ,please register");
+  }
+
+  //  check if user loggedout
+  if (userData.logoutCredentialTime && userData.logoutCredentialTime.getTime() >= decodedData.iat * 1000) {
+    throw new NotFoundException("Invalid login sesssion");
   }
 
   return { userData, decodedData };
