@@ -44,3 +44,8 @@ export const CORS_WHITELIST_ORIGIN = process.env.CORS_WHITELIST_ORIGIN.split(","
 export const gcp = {
   WEB_CLIENT_ID: process.env.GCP_CLIENT_ID,
 };
+
+// nodemailer
+export const EMAIL_SERVICE = process.env.EMAIL_SERVICE;
+export const EMAIL_USER = process.env.EMAIL_USER;
+export const EMAIL_PASS = process.env.EMAIL_PASS;

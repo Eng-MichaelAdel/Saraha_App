@@ -38,6 +38,7 @@ export const generalValidators = {
     profielPictuer: Joi.string(),
     coverProfilePicture: Joi.array().items(Joi.string()),
     googleSub: Joi.string(),
+    otp:Joi.string().length(6)
   },
   file: function () {
     return Joi.object({

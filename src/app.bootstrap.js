@@ -7,7 +7,7 @@ import { userRouer } from "./modules/User/index.js";
 import { globalErrorHandler } from "./middlewares/index.js";
 import { corsOptions } from "../config/index.js";
 import { resolve } from "node:path";
-import {  RedisConnection } from "./common/index.js";
+import {  RedisConnection} from "./common/index.js";
 
 
 async function bootstrap() {

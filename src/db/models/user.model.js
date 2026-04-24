@@ -25,6 +25,7 @@ const userSchema = new mongoose.Schema(
     gender: { type: String, enum: { values: Object.values(genderEnum), message: "{VALUE} is not a valid gender" }, default: genderEnum.male },
     role: { type: String, enum: Object.values(roleEnum), default: roleEnum.user },
     status: { type: String, enum: Object.values(statusEnum), default: statusEnum.active },
+    provider: { type: String, enum: Object.values(providerEnum), default: providerEnum.system },
 
     profielPictuer: String,
     coverProfilePicture: [String],
@@ -33,7 +34,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       index: { name: "idx_googleSub_uniqe", unique: true, sparse: true },
     },
-    provider: { type: String, enum: Object.values(providerEnum), default: providerEnum.system },
+    isEmailVerified: { type: Boolean, default: false },
 
     logoutCredentialTime: { type: Date },
   },

@@ -1,9 +1,9 @@
 import { Router } from "express";
 import { successResponse } from "../../common/index.js";
-import { gmailLogInService, gmailRegisterService, login, logoutService, refreshTokenService, signup } from "./auth.service.js";
+import { gmailLogInService, gmailRegisterService, login, logoutService, refreshTokenService, resendRerifyEmailService, signup, verifyEmailService } from "./auth.service.js";
 import { authenticate } from "../../middlewares/authentication.middleware.js";
 import { validation } from "../../middlewares/index.js";
-import { loginSchema, signupSchema } from "../../validators/auth.validator.js";
+import { confirmEmail, loginSchema, resendConfirmEmail, signupSchema } from "../../validators/auth.validator.js";
 
 const router = Router();
 
@@ -11,6 +11,18 @@ const router = Router();
 router.post("/signup", validation(signupSchema), async (req, res, next) => {
   const user = await signup(req.body);
   successResponse({ res, status: 201, message: "user added successfully", data: { user } });
+});
+
+// * verifyEmail
+router.patch("/confirm-email", validation(confirmEmail), async (req, res, next) => {
+  const result = await verifyEmailService(req.body);
+  successResponse({ res, message: "your email is confirmed" });
+});
+
+//* Resend Verify Email
+router.patch("/resend-confirm-email", validation(resendConfirmEmail), async (req, res, next) => {
+  const result = await resendRerifyEmailService(req.body);
+  successResponse({ res, message: "your email is confirmed" });
 });
 
 //* login

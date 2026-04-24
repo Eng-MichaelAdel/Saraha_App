@@ -18,3 +18,15 @@ export const signupSchema = {
     role: generalValidators.user.role,
   }),
 };
+
+export const resendConfirmEmail = {
+  body: Joi.object({
+    email: generalValidators.user.email.required(),
+  }),
+};
+
+export const confirmEmail = {
+  body: resendConfirmEmail.body.append({
+    otp: generalValidators.user.otp.required(),
+  }),
+};

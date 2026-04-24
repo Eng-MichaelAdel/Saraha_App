@@ -31,3 +31,5 @@ export const filesExtentions = {
   video: ["mp4", "mkv", "avi", "mov", "wmv", "flv", "webm", "mpeg", "mpg"],
   application: ["pdf", "doc", "docx", "xls", "xlsx", "ppt", "pptx", "txt", "rtf"],
 };
+
+
