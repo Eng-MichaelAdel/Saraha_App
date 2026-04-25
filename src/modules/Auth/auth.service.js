@@ -314,7 +314,7 @@ const handleUpdateOrCreateGoogleAccount = async (user, payload) => {
 };
 
 // ^ Helper Functions for create Token
-const buildTokens = (userData, issuer) => {
+export const buildTokens = (userData, issuer) => {
   const Credentials = createLoginCredentials({
     payload: { id: userData._id, email: userData.email, role: userData.role },
     options: {

@@ -27,3 +27,18 @@ export const SharedProfileSchema = {
     userId: generalValidators.user.id.required(),
   }),
 };
+
+export const updatePasswordSchema = {
+  body: Joi.object({
+    oldPassword: generalValidators.user.password.required(),
+    newPassword: generalValidators.user.password
+      .invalid(Joi.ref("oldPassword"))
+      .messages({
+        "string.pattern.base": "Password must be at least 8 characters long and include uppercase, lowercase, number, and special character",
+        "string.empty": "Password is required",
+        "any.invalid": "New password must be different from old password",
+      })
+      .required(),
+    confirmNewPassword: Joi.valid(Joi.ref("newPassword")).messages({ "any.only": "new Passwords doesn't match" }),
+  }),
+};

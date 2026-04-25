@@ -1,5 +1,7 @@
-import { BadRequestException, ConflictException, decrypt, encrypt } from "../../common/index.js";
+import { BadRequestException, compareHash, ConflictException, decrypt, del, encrypt, generateHash, keys, UnauthorizedException } from "../../common/index.js";
 import userRepositories from "../../db/repositories/user.repositories.js";
+import { OAuth2Client } from "google-auth-library";
+import { baseRT_key, buildTokens, logoutService, otpFormatKey } from "../Auth/auth.service.js";
 
 // * get Profile
 export const getUserProfile = async (userProfile) => {
@@ -40,8 +42,39 @@ export const updateProfile = async (userProfile, updateData) => {
   return updatedProfile;
 };
 
+// * update Password
+export const updatePassword = async (passwordData, userAccount, issuer) => {
+  const { oldPassword, newPassword, confirmNewPassword } = passwordData;
+  const { password: hashedPassword } = userAccount;
+
+  // check if the old password entered is matching the user password
+  const isPasswordMatched = await compareHash(oldPassword, hashedPassword);
+  if (!isPasswordMatched) {
+    throw new UnauthorizedException("Incorrect Current Password");
+  }
+
+  for (const hash of userAccount.oldPasswords) {
+    if (await compareHash(newPassword, hash)) {
+      throw new ConflictException("this password is already used before");
+    }
+  }
+
+  // update Password and logeout from all devices
+  userAccount.password = await generateHash(newPassword);
+  userAccount.oldPasswords.push(userAccount.password);
+  userAccount.confirmedPassword = await generateHash(confirmNewPassword);
+  userAccount.logoutCredentialTime = Date.now();
+  await userAccount.save();
+
+  // delete the saved RevokedKeys keys
+  const existsRevokedKeys = await keys(`${baseRT_key(userAccount._id)}*`);
+  del([...existsRevokedKeys]);
+
+  return buildTokens(userAccount, issuer);
+};
+
 // * update Profile Pic
-export const upploadProfilePic = async (userProfile, fileData) => {
+export const uploadProfilePic = async (userProfile, fileData) => {
   //  get user id
   const { _id } = userProfile;
 
@@ -55,7 +88,7 @@ export const upploadProfilePic = async (userProfile, fileData) => {
 };
 
 // * update Profile cover Pics
-export const upploadProfileCover = async (userProfile, fileData) => {
+export const uploadProfileCover = async (userProfile, fileData) => {
   //  get user id
   const { _id } = userProfile;
 
@@ -74,7 +107,7 @@ export const upploadProfileCover = async (userProfile, fileData) => {
 
 // * get Shared Profile
 export const getSharedProfile = async (userId) => {
-  const userProfile = await userRepositories.findById({ id: userId });  
+  const userProfile = await userRepositories.findById({ id: userId });
   if (!userProfile) {
     throw new BadRequestException("Invalid userId , user is not found");
   }

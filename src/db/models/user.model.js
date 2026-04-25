@@ -21,6 +21,7 @@ const userSchema = new mongoose.Schema(
     password: { type: String, required: true },
     confirmedPassword: String,
     phone: String,
+    oldPasswords:[String],
 
     gender: { type: String, enum: { values: Object.values(genderEnum), message: "{VALUE} is not a valid gender" }, default: genderEnum.male },
     role: { type: String, enum: Object.values(roleEnum), default: roleEnum.user },
