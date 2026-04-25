@@ -30,3 +30,10 @@ export const confirmEmail = {
     otp: generalValidators.user.otp.required(),
   }),
 };
+
+export const resetForgotPassword = {
+  body: confirmEmail.body.append({
+    password: generalValidators.user.password.required(),
+    confirmedPassword: generalValidators.user.confirmedPassword.required(),
+  }),
+};

@@ -1,9 +1,9 @@
 import { Router } from "express";
 import { successResponse } from "../../common/index.js";
-import { gmailLogInService, gmailRegisterService, login, logoutService, refreshTokenService, resendRerifyEmailService, signup, verifyEmailService } from "./auth.service.js";
+import { gmailLogInService, gmailRegisterService, login, logoutService, refreshTokenService, requestForgetPasswordCode, resendRerifyEmailService, resetForgetPassword, signup, verifyEmailService, verifyForgetPasswordCode } from "./auth.service.js";
 import { authenticate } from "../../middlewares/authentication.middleware.js";
 import { validation } from "../../middlewares/index.js";
-import { confirmEmail, loginSchema, resendConfirmEmail, signupSchema } from "../../validators/auth.validator.js";
+import { confirmEmail, loginSchema, resendConfirmEmail, resetForgotPassword, signupSchema } from "../../validators/auth.validator.js";
 
 const router = Router();
 
@@ -20,9 +20,9 @@ router.patch("/confirm-email", validation(confirmEmail), async (req, res, next) 
 });
 
 //* Resend Verify Email
-router.patch("/resend-confirm-email", validation(resendConfirmEmail), async (req, res, next) => {
+router.post("/resend-confirm-email", validation(resendConfirmEmail), async (req, res, next) => {
   const result = await resendRerifyEmailService(req.body);
-  successResponse({ res, message: "your email is confirmed" });
+  successResponse({ res, message: "Verification Code is sent ,, Please check your email" });
 });
 
 //* login
@@ -53,6 +53,24 @@ router.post("/gmail/login", async (req, res, next) => {
   const data = await gmailLogInService(req.body, issuer);
 
   successResponse({ res, message: "User Loggen in successfully", data: { credentials: data } });
+});
+
+//* Request ForgotPassword Code
+router.post("/request-forgetPassword-code", validation(resendConfirmEmail), async (req, res, next) => {
+  const result = await requestForgetPasswordCode(req.body);
+  successResponse({ res, message: "reset Code is sent ,, Please check your email" });
+});
+
+//* Verify ForgotPassword Code
+router.patch("/verify-forgetPassword-code", validation(confirmEmail), async (req, res, next) => {
+  const result = await verifyForgetPasswordCode(req.body);
+  successResponse({ res, message: "the Code is Verified" });
+});
+
+//* Reset ForgotPassword
+router.put("/reset-forgetPassword", validation(resetForgotPassword), async (req, res, next) => {
+  const result = await resetForgetPassword(req.body);
+  successResponse({ res, message: "your password is reset" });
 });
 
 //* Logout

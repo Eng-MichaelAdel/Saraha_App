@@ -1,10 +1,10 @@
 export const otpSubjects = {
   Email: {
-    confirmEmail: "confirmEmail",
+    confirm: "confirmEmail",
     maxTrials: "confirmEmail::maxTrials",
   },
   Password: {
-    forgotPassword: "forgotPassword",
+    confirm: "forgotPassword",
     maxTrials: "forgotPassword::maxTrials",
   },
   twoStepsVerifecations: "twoStepsVerifecations",
