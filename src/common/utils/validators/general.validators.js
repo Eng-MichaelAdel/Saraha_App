@@ -40,8 +40,7 @@ export const generalValidators = {
     googleSub: Joi.string(),
     otp:Joi.string().length(6)
   },
-  file: function () {
-    return Joi.object({
+  file: Joi.object({
       fieldname: Joi.string().required(),
       originalname: Joi.string().required(),
       encoding: Joi.string().required(),
@@ -50,6 +49,6 @@ export const generalValidators = {
       filename: Joi.string().required(),
       path: Joi.string().required(),
       size: Joi.number().required(),
-    });
-  },
+
+  }),
 };

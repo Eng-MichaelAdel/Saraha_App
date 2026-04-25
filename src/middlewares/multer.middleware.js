@@ -31,7 +31,7 @@ export const multerLocal = (path) => {
   };
 
   const limits = {
-    files: 1,
+    files: 5,
   };
 
   return multer({ fileFilter, storage, limits });

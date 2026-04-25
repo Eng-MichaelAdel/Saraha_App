@@ -1,1 +1,1 @@
-export {default as userRouer} from "./user.controller.js"
+export {default} from "./user.controller.js"

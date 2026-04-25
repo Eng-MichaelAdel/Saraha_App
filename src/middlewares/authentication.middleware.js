@@ -1,6 +1,6 @@
 import { decodeToken, NotFoundException, UnauthorizedException } from "../common/index.js";
 
-export const authenticate = async (req, res, next) => {
+export const userAuthenticate = async (req, res, next) => {
   //  get access token from headers
   const { authorization } = req.headers;
 
@@ -10,6 +10,25 @@ export const authenticate = async (req, res, next) => {
   }
 
   //  detect the type of authorization token
+  await authenticate(req, authorization);
+
+  next();
+};
+
+export const messageAuthenticate = async (req, res, next) => {
+  if (req.headers.authorization) {
+    //  get access token from headers
+    const { authorization } = req.headers;
+
+    //  detect the type of authorization token
+    await authenticate(req ,authorization);
+  }
+
+  next();
+};
+
+const authenticate = async (req, authorization) => {
+  //  detect the type of authorization token
   const [prefix, token] = authorization.split(" ");
   if (prefix !== "Bearer") {
     throw new UnauthorizedException("invalid Authorization type , Expected Bearer token");
@@ -18,13 +37,8 @@ export const authenticate = async (req, res, next) => {
   //  decode user data according to the authorization type
   const { userData, decodedData } = await decodeTokenByAuthType(prefix, token);
 
-  // if (userData.logoutCredentialTime.getTime() >= decodedData.iat * 1000) {
-  //   throw new NotFoundException("Invalid login sesssion");
-  // }
-
   req.user = userData;
   req.decode = decodedData;
-  next();
 };
 
 export const decodeTokenByAuthType = async (prefix, token) => {

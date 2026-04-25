@@ -15,11 +15,11 @@ export const updateProfileShcema = {
 };
 
 export const updateProfileImageShcema = {
-  file: generalValidators.file().required().messages({ "any.required": "no file uploaded .. pleasse upload file" }),
+  file: generalValidators.file.required().messages({ "any.required": "no file uploaded .. pleasse upload file" }),
 };
 
 export const uploadCoverPicSchema = {
-  files: Joi.array().items(generalValidators.file().required()).required().messages({ "any.required": "no file uploaded .. pleasse upload file" }),
+  files: Joi.array().items(generalValidators.file).required().required().messages({ "any.required": "no file uploaded .. pleasse upload file" }),
 };
 
 export const SharedProfileSchema = {

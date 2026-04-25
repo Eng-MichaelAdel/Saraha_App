@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { successResponse } from "../../common/index.js";
 import { gmailLogInService, gmailRegisterService, login, logoutService, refreshTokenService, requestForgetPasswordCode, resendRerifyEmailService, resetForgetPassword, signup, verifyEmailService, verifyForgetPasswordCode } from "./auth.service.js";
-import { authenticate } from "../../middlewares/authentication.middleware.js";
+import { userAuthenticate } from "../../middlewares/authentication.middleware.js";
 import { validation } from "../../middlewares/index.js";
 import { confirmEmail, loginSchema, resendConfirmEmail, resetForgotPassword, signupSchema } from "../../validators/auth.validator.js";
 
@@ -33,7 +33,7 @@ router.post("/login", validation(loginSchema), async (req, res, next) => {
 });
 
 // * Refresh Token
-router.post("/refreshToken", authenticate, async (req, res, next) => {
+router.post("/refreshToken", userAuthenticate, async (req, res, next) => {
   const issuer = `${req.protocol}://${req.host}`;
   const Token = await refreshTokenService(req.decode, issuer);
   successResponse({ res, message: "Token Refreshed Successfully", data: { Token } });
@@ -74,7 +74,7 @@ router.put("/reset-forgetPassword", validation(resetForgotPassword), async (req,
 });
 
 //* Logout
-router.post("/logout", authenticate, async (req, res, next) => {
+router.post("/logout", userAuthenticate, async (req, res, next) => {
   const message = await logoutService(req.user, req.decode, req.headers.refreshtoken, req.body.logoutFromAll);
   successResponse({ res, message });
 });
