@@ -23,7 +23,6 @@ export const updateProfile = async (userProfile, updateData) => {
   //  check if email already exist in another account
   if (updateData.email) {
     const emailExist = await userRepositories.findOne({ filter: { email: updateData.email }, select: { email: 1 } });
-    // console.log(emailExist.id);
 
     if (emailExist && emailExist.id !== _id.toString()) {
       throw new ConflictException("email is already exist");
@@ -84,7 +83,7 @@ export const uploadProfilePic = async (userProfile, fileData) => {
     throw new BadRequestException("File is required");
   }
 
-  //  supdate profile pic and return the updated user profile
+  //  update profile pic and return the updated user profile
   const updatedProfile = await userRepositories.findByIdAndUpdate({ id: _id, updates: { profielPictuer: fileData.path } });
   return updatedProfile;
 };
@@ -102,7 +101,7 @@ export const uploadProfileCover = async (userProfile, fileData) => {
     return path;
   });
 
-  //  supdate profile pic and return the updated user profile
+  //  update profile pic and return the updated user profile
   const updatedProfile = await userRepositories.findByIdAndUpdate({ id: _id, updates: { coverProfilePicture: coverPicPaths } });
   return updatedProfile;
 };

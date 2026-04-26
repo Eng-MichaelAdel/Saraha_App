@@ -5,7 +5,7 @@ import { transporter } from "../Clients/index.js";
 export const sendEmail = async ({ to, cc, subject, attachments = [], html }) => {
   try {
     const info = await transporter.sendMail({
-      from: `"Sarah-aApp" <${EMAIL_USER}>`, // sender address
+      from: `"Sarah-aApp" <${EMAIL_USER}>`, 
       to,
       cc,
       subject,

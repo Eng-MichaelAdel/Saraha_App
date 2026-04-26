@@ -359,7 +359,6 @@ export const otpFormatKey = (email, otpSubject) => {
 
 export const checkOtp_Blocking_MaxTrials = async (email, state, otpPurpose) => {
   if (state === otpState.resendOtp) {
-    console.log(state);
 
     // check if the user ruin the max trials and is blocked
     const [maxTrials, BlockTime] = await Promise.all([get(otpFormatKey(email, otpSubjects[otpPurpose].maxTrials)), ttl(otpFormatKey(email, otpSubjects[otpPurpose].maxTrials))]);
