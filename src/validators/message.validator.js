@@ -9,3 +9,7 @@ export const sendMessageSchema = {
   }),
   files: Joi.array().items(generalValidators.file).messages({ "any.required": "no file uploaded .. pleasse upload file" }),
 };
+
+export const getMessageByIdSchema = {
+  params: Joi.object({ messageId: generalValidators.user.id.required() }),
+};
