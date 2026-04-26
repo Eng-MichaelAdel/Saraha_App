@@ -3,7 +3,7 @@ import { resolve } from "node:path";
 
 export const NODE_ENV = process.env.NODE_ENV;
 
-config({ path: resolve(`./config/.env.${NODE_ENV}`) });
+config({ path: resolve(`.env.${NODE_ENV}`) });
 
 // server
 export const PORT = process.env.PORT ?? "3000";

@@ -1,4 +1,5 @@
-import { BadRequestException} from "../../common/index.js";
+import { BadRequestException } from "../../common/index.js";
+import { userModel } from "../models/index.js";
 
 export class BaseRepository {
   constructor(model) {
@@ -27,7 +28,6 @@ export class BaseRepository {
   findOne({ filter, select = {}, options = {} } = {}) {
     if (!filter || Object.keys(filter).length === 0) {
       throw new BadRequestException("filter is required");
-      ;
     }
     let query = this.model.findOne(filter, select);
 
@@ -111,18 +111,28 @@ export class BaseRepository {
   }
 
   //*   Delete methods
-  deleteOne({ filter } = {}) {
+  deleteOne({ filter, options } = {}) {
     if (!filter || Object.keys(filter).length === 0) {
       throw new BadRequestException("filter is required");
     }
-    return this.model.deleteOne(filter);
+    const { session, ...otherOptions } = options;
+    const query = this.model.deleteOne(filter, otherOptions);
+    if (session) {
+      query.session();
+    }
+    return query.exec();
   }
 
-  deleteMany({ filter } = {}) {
+  deleteMany({ filter, options } = {}) {
     if (!filter || Object.keys(filter).length === 0) {
       throw new BadRequestException("filter is required");
     }
-    return this.model.deleteMany(filter);
+    const { session, ...otherOptions } = options;
+    const query = this.model.deleteMany(filter, otherOptions);
+    if (session) {
+      query.session(session);
+    }
+    return query.exec();
   }
 
   findOneAndDelete({ filter } = {}) {
@@ -132,7 +142,15 @@ export class BaseRepository {
     return this.model.findOneAndDelete(filter);
   }
 
-  findByIdAndDelete(id) {
-    return this.model.findByIdAndDelete(id);
+  findByIdAndDelete({ id, options }) {
+    if (!id) {
+      throw new BadRequestException("id is required");
+    }
+    const { session, ...otherOptions } = options;
+    const query = this.model.findByIdAndDelete(id, otherOptions);
+    if (session) {
+      query.session(session);
+    }
+    return query.exec();
   }
 }

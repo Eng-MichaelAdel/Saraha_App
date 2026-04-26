@@ -2,6 +2,8 @@ import { BadRequestException, compareHash, ConflictException, decrypt, del, encr
 import userRepositories from "../../db/repositories/user.repositories.js";
 import { OAuth2Client } from "google-auth-library";
 import { baseRT_key, buildTokens, logoutService, otpFormatKey } from "../Auth/auth.service.js";
+import mongoose from "mongoose";
+import messageRepositories from "../../db/repositories/message.repositories.js";
 
 // * get Profile
 export const getUserProfile = async (userProfile) => {
@@ -118,12 +120,12 @@ export const getSharedProfile = async (userId) => {
 export const deleteUserAccount = async (userProfile) => {
   //  get the user id from the user profile
   const { _id } = userProfile;
-  console.log();
 
-  //  delete account
-  const state = await userRepositories.deleteOne({ filter: { _id } });
-
-  console.log(state);
-
-  return;
+  const session = await mongoose.startSession();
+  return (await session).withTransaction(async () => {
+    //  delete all user messages
+    await messageRepositories.deleteMany({ filter: { receverId: _id }, options: { session } });
+    //  delete account
+    await userRepositories.findByIdAndDelete({ id: _id, options: { session } });
+  });
 };
