@@ -1,12 +1,14 @@
 import cors from "cors";
 import express from "express";
-import { PORT } from "../config/index.js";
+import { limiterOptions, PORT } from "../config/index.js";
 import dbConnection from "./db/db.connection.js";
 import { authRouter, userRouter, messageRouter } from "./modules/index.js";
 import { globalErrorHandler } from "./middlewares/index.js";
 import { corsOptions } from "../config/index.js";
 import { resolve } from "node:path";
 import { RedisConnection } from "./common/index.js";
+import helmet from "helmet";
+import rateLimit from "express-rate-limit";
 
 async function bootstrap() {
   // create app instance from express
@@ -19,7 +21,7 @@ async function bootstrap() {
   await RedisConnection();
 
   //  cors
-  app.use(cors(corsOptions));
+  app.use(cors(corsOptions), helmet(), rateLimit(limiterOptions));
 
   // apploads middleware
   app.use("/uploads", express.static(resolve("../uploads")));
@@ -31,6 +33,11 @@ async function bootstrap() {
   app.use("/auth", authRouter);
   app.use("/user", userRouter);
   app.use("/message", messageRouter);
+
+  // Test Api
+  app.use("/", (req, res) => {
+    res.send("Saraha app is running");
+  });
 
   // Invalid app router handler
   app.use("{/*dummy}", (req, res, next) => {

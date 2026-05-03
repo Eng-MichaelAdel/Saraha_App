@@ -29,3 +29,9 @@ export class ConflictException extends HttpAppError {
     super(message, 409, "Conflict", details);
   }
 }
+
+export class TooManyRequestsException extends HttpAppError {
+  constructor(message = "Too Many Requests", details) {
+    super(message, 429, "Too_Many_Requests", details);
+  }
+}

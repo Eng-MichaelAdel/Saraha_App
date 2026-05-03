@@ -1,6 +1,18 @@
 import { Router } from "express";
 import { successResponse } from "../../common/index.js";
-import { gmailLogInService, gmailRegisterService, login, logoutService, refreshTokenService, requestForgetPasswordCode, resendRerifyEmailService, resetForgetPassword, signup, verifyEmailService, verifyForgetPasswordCode } from "./auth.service.js";
+import {
+  gmailLogInService,
+  gmailRegisterService,
+  login,
+  logoutService,
+  refreshTokenService,
+  requestForgetPasswordCode,
+  resendRerifyEmailService,
+  resetForgetPassword,
+  signup,
+  verifyEmailService,
+  verifyForgetPasswordCode,
+} from "./auth.service.js";
 import { userAuthenticate } from "../../middlewares/authentication.middleware.js";
 import { validation } from "../../middlewares/index.js";
 import { confirmEmail, loginSchema, resendConfirmEmail, resetForgotPassword, signupSchema } from "../../validators/auth.validator.js";
